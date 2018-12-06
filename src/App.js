@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Link } from "react-router-dom";
-// import * as BooksAPI from './BooksAPI'
+import * as BooksAPI from './BooksAPI'
 import "./App.css";
 
-import Header from "./Header/Header";
-import BookList from "./BookList/BookList";
-import SearchBooks from "./SearchBooks/SearchBooks";
+import ListBooks from "./components/ListBooks";
+import SearchBooks from "./components/SearchBooks";
 
 class BooksApp extends React.Component {
+
   render() {
     return (
       <div className="app">
@@ -16,11 +16,8 @@ class BooksApp extends React.Component {
           exact
           path="/"
           render={() => (
-            <div className="list-books">
-              <Header />
-              <div className="list-books-content">
-                <BookList />
-              </div>
+            <div>
+              <ListBooks />
               <div className="open-search">
                 <Link className="search-btn" to="/search">
                   Add a book
