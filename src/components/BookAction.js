@@ -9,18 +9,8 @@ class BookAction extends Component {
   };
 
   state = {
-    shelf: ""
+    shelf: this.props.book.shelf ? this.props.book.shelf : "none"
   };
-
-  static getDerivedStateFromProps(props, prevState) {
-    const { shelf } = props.book;
-    if (prevState.shelf !== shelf) {
-      return {
-        shelf: shelf
-      };
-    }
-    return null;
-  }
 
   render() {
     const { shelf } = this.state;
@@ -28,7 +18,10 @@ class BookAction extends Component {
 
     return (
       <div className="book-shelf-changer">
-        <select value={shelf} onChange={() => onBookAction(book, shelf)}>
+        <select
+          value={shelf}
+          onChange={event => onBookAction(book, event.target.value)}
+        >
           <option value="move" disabled>
             Move to...
           </option>

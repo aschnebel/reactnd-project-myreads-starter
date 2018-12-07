@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Link } from "react-router-dom";
+
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 
@@ -12,9 +13,12 @@ class BooksApp extends React.Component {
   };
 
   componentDidMount() {
+    this.getAllBooks();
+  }
+
+  getAllBooks = () => {
     BooksAPI.getAll()
       .then(books => {
-        console.log(books);
         this.setState(() => ({
           books: books
         }));
@@ -22,10 +26,12 @@ class BooksApp extends React.Component {
       .catch(error => {
         console.error("Error receiving books, ", error);
       });
-  }
+  };
 
   handleBookUpdate = (book, shelf) => {
-    //TODO: Implement setState on BookUpdate
+    BooksAPI.update(book, shelf).then(() => {
+      this.getAllBooks();
+    });
   };
 
   render() {
@@ -33,7 +39,16 @@ class BooksApp extends React.Component {
 
     return (
       <div className="app">
-        <Route exact path="/search" component={SearchBooks} />
+        <Route
+          exact
+          path="/search"
+          render={() => (
+            <SearchBooks
+              savedBooks={books}
+              onBookUpdate={this.handleBookUpdate}
+            />
+          )}
+        />
         <Route
           exact
           path="/"

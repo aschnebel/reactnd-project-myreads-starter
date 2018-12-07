@@ -4,8 +4,9 @@ import PropTypes from "prop-types";
 import BookAction from "./BookAction";
 
 const Book = props => {
-  const { thumbnail, book, onBookAction } = props;
+  const { book, onBookAction } = props;
   const { title, authors } = book;
+  const thumbnail = book.imageLinks ? book.imageLinks.thumbnail : null;
 
   return (
     <div className="book">
@@ -21,20 +22,21 @@ const Book = props => {
         <BookAction book={book} onBookAction={onBookAction} />
       </div>
       <div className="book-title">{title}</div>
-      <div className="book-authors">
-        {authors.map((author, index) => (
-          <span key={index}>
-            {author} <br />
-          </span>
-        ))}
-      </div>
+      {authors && (
+        <div className="book-authors">
+          {authors.map((author, index) => (
+            <span key={index}>
+              {author} <br />
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 Book.propTypes = {
   book: PropTypes.object.isRequired,
-  thumbnail: PropTypes.string.isRequired,
   onBookAction: PropTypes.func.isRequired
 };
 

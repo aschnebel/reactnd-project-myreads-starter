@@ -1,28 +1,63 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import * as BooksAPI from "./../BooksAPI";
+
+import SearchBooksBar from "./SearchBooksBar";
+import SearchBooksResults from "./SearchBooksResults";
 
 class SearchBooks extends Component {
+  static propTypes = {
+    savedBooks: PropTypes.array.isRequired,
+    onBookUpdate: PropTypes.func.isRequired
+  };
+
+  state = {
+    books: [],
+    error: ""
+  };
+
+  handleSearch = query => {
+    if (query) {
+      BooksAPI.search(query).then(result => {
+        if (result.error) {
+          this.setState(() => ({
+            error: result.error
+          }));
+        } else {
+          result = result.map(book => {
+            const match = this.props.savedBooks.filter(
+              savedBook => savedBook.id === book.id
+            );
+            return match.length !== 0 ? match[0] : book;
+          });
+
+          this.setState(() => ({
+            books: result,
+            error: ""
+          }));
+        }
+      });
+    } else {
+      this.setState(() => ({
+        books: [],
+        error: ""
+      }));
+    }
+  };
+
   render() {
+    const { books, error } = this.state;
+    const { onBookUpdate } = this.props;
+
     return (
       <div className="search-books">
-        <div className="search-books-bar">
-          <Link className="close-search"  to="/">
-            Close
-          </Link>
-          <div className="search-books-input-wrapper">
-            {/*
-                NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                You can find these search terms here:
-                https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                you don't find a specific author or title. Every search is limited by search terms.
-              */}
-            <input type="text" placeholder="Search by title or author" />
-          </div>
-        </div>
+        <SearchBooksBar onSearchQuery={this.handleSearch} />
         <div className="search-books-results">
-          <ol className="books-grid" />
+          {error ? (
+            <h2>{error}</h2>
+          ) : (
+            <SearchBooksResults books={books} onBookUpdate={onBookUpdate} />
+          )}
         </div>
       </div>
     );
